@@ -1,3 +1,4 @@
+import 'package:device_vitals/src/core/config/build_config.dart';
 import 'package:device_vitals/src/core/constants/app_colors.dart';
 import 'package:device_vitals/src/core/utils/loading.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class BaseView<T extends BlocBase<S>, S> extends StatelessWidget {
-  const BaseView({super.key});
+  BaseView({super.key});
+
+  final logger = BuildConfig.instance.envConfig.logger;
 
   Widget body(BuildContext context);
 

@@ -16,8 +16,12 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
   logger: ^2.6.2
   dio: ^5.9.0
+  package_info_plus: ^9.0.0
+  get_it: ^9.2.0
+
 
 
 
