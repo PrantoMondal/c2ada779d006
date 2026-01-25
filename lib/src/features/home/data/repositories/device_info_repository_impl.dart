@@ -2,27 +2,27 @@ import 'package:device_vitals/src/features/home/data/datasources/device_info_dat
 import 'package:device_vitals/src/features/home/domain/repositories/device_info_repository.dart';
 
 class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
-  final DeviceInfoDataSource _localDataSource;
+  final DeviceInfoDataSource _deviceInfoDataSource;
 
-  DeviceInfoRepositoryImpl(this._localDataSource);
+  DeviceInfoRepositoryImpl(this._deviceInfoDataSource);
 
   @override
   Future<Map<String, dynamic>> getAllInfo() {
-    return _localDataSource.getAllInfo();
+    return _deviceInfoDataSource.getAllInfo();
   }
 
   @override
   Future<int?> getBatteryInfo() {
-    return _localDataSource.getBatteryInfo();
+    return _deviceInfoDataSource.getBatteryInfo();
   }
 
   @override
   Future<double?> getMemoryInfo() {
-    return _localDataSource.getMemoryInfo();
+    return _deviceInfoDataSource.getMemoryInfo();
   }
 
   @override
   Future<double?> getThermalInfo() {
-    return _localDataSource.getThermalInfo();
+    return _deviceInfoDataSource.getThermalInfo();
   }
 }

@@ -4,80 +4,164 @@ import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart
 import 'package:device_vitals/src/features/home/presentation/widgets/sensor_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class HomeScreen extends BaseView<HomeBloc, HomeState> {
   HomeScreen({super.key});
 
   @override
-  bool isLoading(HomeState state) => state is HomeLoading;
-
-  // @override
-  // PreferredSizeWidget? appBar(BuildContext context) {
-  //   return super.appBar(context);
-  // }
+  bool isLoading(HomeState state) => state.isLoading && !state.isRefreshing;
 
   @override
   Widget body(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
-        if (state is HomeSuccess) {
-          onError(context, "message");
-        } else if (state is HomeError) {
-          onError(context, state.message);
-        }
-      },
-      builder: (context, state) {
-        if (state is HomeError) {
-          return Center(
-            child: Text(
-              state.message,
-              style: const TextStyle(color: AppColors.errorColor),
+        if (state.isFailure && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.errorColor,
+              action: SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: () => context.read<HomeBloc>().add(const LoadHomeData()),
+              ),
             ),
           );
         }
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: const [
-            // Battery card
-            SensorInfoCard(
-              title: "Battery",
-              value: "78",
-              unit: "%",
-              subtitle: "Charging • Est. 5h left",
-              icon: Icon(
-                Icons.battery_charging_full_rounded,
-                size: 32,
-                color: Colors.white,
+      },
+      builder: (context, state) {
+        if (state.isFailure && !state.hasData) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline_rounded, size: 64, color: AppColors.errorColor),
+                const SizedBox(height: 16),
+                Text(
+                  state.errorMessage ?? 'Failed to load device info',
+                  style: const TextStyle(fontSize: 18, color: AppColors.errorColor),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => context.read<HomeBloc>().add(const LoadHomeData()),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final vitals = state.deviceData;
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HomeBloc>().add(const LoadHomeData(isRefresh: true));
+            await Future.delayed(const Duration(milliseconds: 300));
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _buildVitalCard(
+                context,
+                title: "Battery",
+                value: vitals != null ? '${vitals['batteryLevel'] ?? '--'}' : '--',
+                unit: "%",
+                subtitle: vitals != null
+                    ? (vitals['isCharging'] == true ? "Charging" : "Not charging") +
+                          (vitals['estimatedTime'] != null
+                              ? " • ${vitals['estimatedTime']}"
+                              : "")
+                    : "Loading...",
+                icon: Icons.battery_charging_full_rounded,
+                backgroundColor: Colors.blue,
               ),
-              backgroundColor: Colors.blue,
-              textColor: Colors.white,
-            ),
 
-            // Memory card
-            SensorInfoCard(
-              title: "Memory",
-              value: "3.2",
-              unit: "/ 8 GB",
-              subtitle: "Used • Apps + System",
-              icon: Icon(Icons.memory_rounded, size: 32, color: Colors.white),
-              backgroundColor: Colors.teal,
-            ),
+              _buildVitalCard(
+                context,
+                title: "Memory",
+                value: vitals != null
+                    ? double.tryParse(
+                            vitals['usedMemoryGB'].toString(),
+                          )?.toStringAsFixed(4) ??
+                          '--'
+                    : '--',
+                unit: vitals != null
+                    ? '/ ${double.tryParse(vitals['totalMemoryGB'].toString())?.toStringAsFixed(4) ?? '--'} GB'
+                    : '',
+                subtitle: "Used • Apps + System",
+                icon: Icons.memory_rounded,
+                backgroundColor: Colors.teal,
+              ),
 
-            // Thermal card
-            SensorInfoCard(
-              title: "Thermal",
-              value: "38.4",
-              unit: "°C",
-              subtitle: "Moderate",
-              icon: Icon(Icons.thermostat_rounded, size: 32, color: Colors.white),
-              backgroundColor: Colors.deepOrange,
-            ),
-          ],
+              _buildVitalCard(
+                context,
+                title: "Thermal",
+                value: vitals != null ? '${vitals['temperatureC'] ?? '--'}' : '--',
+                unit: "°C",
+                subtitle: _getThermalStatus(vitals?['temperatureC']),
+                icon: Icons.thermostat_rounded,
+                backgroundColor: _getThermalColor(vitals?['temperatureC']),
+              ),
+
+              if (state.lastUpdated != null && state.isSuccess)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Text(
+                    'Last updated: ${state.lastUpdated!.toLocal().toString().substring(0, 19)}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  ),
+                ),
+
+              if (state.isLoading && !state.hasData)
+                const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          ),
         );
       },
     );
+  }
+
+  Widget _buildVitalCard(
+    BuildContext context, {
+    required String title,
+    required String value,
+    required String unit,
+    required String subtitle,
+    required IconData icon,
+    required Color backgroundColor,
+  }) {
+    return SensorInfoCard(
+      title: title,
+      value: value,
+      unit: unit,
+      subtitle: subtitle,
+      icon: Icon(icon, size: 32, color: Colors.white),
+      backgroundColor: backgroundColor,
+      textColor: Colors.white,
+    );
+  }
+
+  String _getThermalStatus(double? temp) {
+    if (temp == null) return "Loading...";
+    if (temp < 35) return "Cool";
+    if (temp < 42) return "Normal";
+    if (temp < 50) return "Warm";
+    return "Hot • Caution";
+  }
+
+  Color _getThermalColor(double? temp) {
+    if (temp == null) return Colors.deepOrange;
+    if (temp < 35) return Colors.blue;
+    if (temp < 42) return Colors.teal;
+    if (temp < 50) return Colors.orange;
+    return Colors.redAccent;
   }
 }

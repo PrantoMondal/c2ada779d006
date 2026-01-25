@@ -1,8 +1,9 @@
+import 'package:device_vitals/src/core/constants/app_strings.dart';
 import 'package:device_vitals/src/features/home/domain/repositories/device_info_repository.dart';
 import 'package:flutter/services.dart';
 
 class DeviceInfoDataSource implements DeviceInfoRepository {
-  static const MethodChannel _channel = MethodChannel('com.yourdomain.dev/device-info');
+  static const MethodChannel _channel = MethodChannel(AppStrings.deviceInfoChannelName);
 
   @override
   Future<Map<String, dynamic>> getAllInfo() async {

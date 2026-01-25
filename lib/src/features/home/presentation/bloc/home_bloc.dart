@@ -1,24 +1,36 @@
-import 'package:bloc/bloc.dart';
+import 'package:device_vitals/src/features/home/domain/usecases/get_device_info.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(HomeInitial()) {
+  final GetDeviceInfo getDeviceInfo;
+
+  HomeBloc({required this.getDeviceInfo}) : super(const HomeState()) {
     on<LoadHomeData>(_onLoadHomeData);
   }
 
-  void _onLoadHomeData(LoadHomeData event, Emitter<HomeState> emit) async {
-    emit(HomeLoading());
+  Future<void> _onLoadHomeData(LoadHomeData event, Emitter<HomeState> emit) async {
+    if (state.isLoading) return;
+
+    emit(state.copyWith(status: HomeStatus.loading, isRefreshing: event.isRefresh));
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      final data = await getDeviceInfo();
 
-      emit(const HomeSuccess(message: "Home data loaded successfully"));
+      emit(
+        state.copyWith(
+          status: HomeStatus.success,
+          deviceData: data,
+          lastUpdated: DateTime.now(),
+          errorMessage: null,
+        ),
+      );
     } catch (e) {
-      emit(HomeError("Failed to load home data"));
+      emit(state.copyWith(status: HomeStatus.failure, errorMessage: e.toString()));
     }
   }
 }
