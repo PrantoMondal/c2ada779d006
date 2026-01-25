@@ -32,7 +32,18 @@ abstract class BaseView<T extends BlocBase<S>, S> extends StatelessWidget {
 
   String errorMessage(S state) => "";
 
-  void onError(BuildContext context, String message) {}
+  void onError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: AppColors.errorColor,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
