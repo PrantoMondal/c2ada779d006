@@ -16,6 +16,30 @@ class VitalsRepository {
       vital.memory_usage,
     );
   }
+
+  getLatest(limit = 100) {
+    return db
+      .prepare(
+        `
+      SELECT * FROM vitals
+      ORDER BY timestamp DESC
+      LIMIT ?
+    `,
+      )
+      .all(limit);
+  }
+
+  getAllByDevice(deviceId) {
+    return db
+      .prepare(
+        `
+      SELECT * FROM vitals
+      WHERE device_id = ?
+      ORDER BY timestamp ASC
+    `,
+      )
+      .all(deviceId);
+  }
 }
 
 module.exports = new VitalsRepository();
