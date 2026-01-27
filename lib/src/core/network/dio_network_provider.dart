@@ -16,11 +16,9 @@ class NetworkProvider {
   static Dio get httpDio {
     if (_instance == null) {
       _instance = Dio(_options);
-
       return _instance!;
     } else {
       _instance!.interceptors.clear();
-
       return _instance!;
     }
   }

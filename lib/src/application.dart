@@ -1,5 +1,7 @@
 import 'package:device_vitals/injection_container.dart';
 import 'package:device_vitals/src/core/routes/app_router.dart';
+import 'package:device_vitals/src/features/history/presentation/bloc/history_bloc.dart';
+import 'package:device_vitals/src/features/history/presentation/view/history_screen.dart';
 import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart';
 import 'package:device_vitals/src/features/home/presentation/view/home_screen.dart';
 import 'package:device_vitals/src/features/splash/presentation/view/splash_screen.dart';
@@ -21,14 +23,9 @@ class Application extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.splash,
       routes: {
-        Routes.splash: (_) =>
-            BlocProvider(create: (_) => sl<SplashBloc>(), child: SplashScreen()),
-        Routes.home: (_) =>
-            BlocProvider(create: (_) => sl<HomeBloc>(), child: HomeScreen()),
-        // Routes.history: (_) => BlocProvider(
-        // create: (_) => sl<HistoryBloc>(),
-        // child: const HistoryScreen(),
-        // ),
+        Routes.splash: (_) => BlocProvider(create: (_) => sl<SplashBloc>(), child: SplashScreen()),
+        Routes.home: (_) => BlocProvider(create: (_) => sl<HomeBloc>(), child: HomeScreen()),
+        Routes.history: (_) => BlocProvider(create: (_) => sl<HistoryBloc>(), child: HistoryScreen()),
       },
     );
   }
