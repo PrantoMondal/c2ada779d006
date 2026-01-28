@@ -1,78 +1,91 @@
+import 'package:device_vitals/src/core/constants/app_colors.dart';
+import 'package:device_vitals/src/core/constants/app_values.dart';
 import 'package:flutter/material.dart';
 
 class HistoryCard extends StatelessWidget {
-  final String timeLabel;
+  final String time;
   final double temperature;
   final int battery;
   final String memory;
-  final Color backgroundColor;
 
   const HistoryCard({
     super.key,
-    required this.timeLabel,
+    required this.time,
     required this.temperature,
     required this.battery,
     required this.memory,
-    required this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(AppValues.gap),
+      padding: const EdgeInsets.all(AppValues.gapSmall),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppValues.radiusSmall),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Left content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  timeLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                _infoText('Thermal State: ${temperature.toStringAsFixed(1)} °C'),
-                _infoText('Battery Level: $battery%'),
-                _infoText('Memory Usage: $memory'),
-              ],
+          Text(
+            time,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
           ),
 
-          /// Right icon
-          Container(
-            height: 44,
-            width: 44,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.bar_chart_rounded, color: Colors.white),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+
+          const SizedBox(height: 12),
+
+          _infoRow(
+            icon: Icons.thermostat_outlined,
+            label: 'Thermal State',
+            value: '${temperature.toStringAsFixed(1)} °C',
           ),
+          _infoRow(
+            icon: Icons.battery_5_bar_outlined,
+            label: 'Battery Level',
+            value: '$battery%',
+          ),
+          _infoRow(icon: Icons.memory_outlined, label: 'Memory Usage', value: memory),
         ],
       ),
     );
   }
 
-  Widget _infoText(String text) {
+  Widget _infoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 2),
-      child: Text(text, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: AppColors.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

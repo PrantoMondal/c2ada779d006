@@ -1,6 +1,7 @@
 import 'package:device_vitals/src/core/base/base_view.dart';
 import 'package:device_vitals/src/core/constants/app_colors.dart';
 import 'package:device_vitals/src/core/routes/app_router.dart';
+import 'package:device_vitals/src/core/utils/extensions.dart';
 import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart';
 import 'package:device_vitals/src/features/home/presentation/widgets/sensor_info_card.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +13,23 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
 
   @override
   bool isLoading(HomeState state) => state.isLoading && !state.isRefreshing;
+
   @override
   PreferredSizeWidget? appBar(BuildContext context) {
     return AppBar(
-      title: const Text('Device Vitals'),
+      backgroundColor: AppColors.primary,
+      title: Text(
+        'Device Vitals',
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(color: AppColors.textPrimary),
+      ),
       actions: [
         IconButton(
           onPressed: () => Navigator.of(context).pushNamed(Routes.history),
-          icon: const Icon(Icons.refresh),
+          icon: const Icon(Icons.history, color: AppColors.textPrimary),
         ),
-      ]
+      ],
     );
   }
 
@@ -81,52 +89,45 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   state.lastUpdated != null && state.isSuccess
-                      ? 'Last updated: ${DateFormat("dd MMM yyyy 'at' HH:mm:ss").format(state.lastUpdated!.toLocal())}'
+                      ? 'Last updated: ${state.lastUpdated!.toString().formattedTime}'
                       : '',
                   textAlign: TextAlign.start,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              _buildVitalCard(
-                context,
-                title: "Battery",
-                value: vitals != null ? '${vitals['batteryLevel'] ?? '--'}' : '--',
-                unit: "%",
-                subtitle: vitals != null
-                    ? (vitals['isCharging'] == true ? "Charging" : "Not charging") +
-                          (vitals['estimatedTime'] != null
-                              ? " • ${vitals['estimatedTime']}"
-                              : "")
-                    : "Loading...",
+              SensorInfoCard(
+                title: 'Battery',
+                status: vitals != null
+                    ? (vitals['isCharging'] == true ? 'Charging' : 'Not charging')
+                    : 'Loading',
+                value: vitals != null ? '${vitals['batteryLevel'] ?? '--'}%' : '--',
+                subtitle: "",
                 icon: Icons.battery_charging_full_rounded,
-                backgroundColor: Colors.blue,
+                iconColor: Colors.blue,
+                cardColor: AppColors.secondary,
               ),
 
-              _buildVitalCard(
-                context,
-                title: "Memory",
+              SensorInfoCard(
+                title: 'Memory',
+                status: 'Used',
                 value: vitals != null
-                    ? double.tryParse(
-                            vitals['usedMemoryGB'].toString(),
-                          )?.toStringAsFixed(4) ??
-                          '--'
+                    ? '${double.tryParse(vitals['usedMemoryGB'].toString())?.toStringAsFixed(2) ?? '--'} GB'
+                          '/ ${double.tryParse(vitals['totalMemoryGB'].toString())?.toStringAsFixed(2) ?? '--'} GB'
                     : '--',
-                unit: vitals != null
-                    ? '/ ${double.tryParse(vitals['totalMemoryGB'].toString())?.toStringAsFixed(4) ?? '--'} GB'
-                    : '',
-                subtitle: "Used • Apps + System",
+                subtitle: "Apps + System",
                 icon: Icons.memory_rounded,
-                backgroundColor: Colors.teal,
+                iconColor: Colors.teal,
+                cardColor: AppColors.secondary,
               ),
 
-              _buildVitalCard(
-                context,
-                title: "Thermal",
-                value: vitals != null ? '${vitals['temperatureC'] ?? '--'}' : '--',
-                unit: "°C",
-                subtitle: _getThermalStatus(vitals?['temperatureC']),
+              SensorInfoCard(
+                title: 'Thermal',
+                status: _getThermalStatus(vitals?['temperatureC']),
+                value: vitals != null ? '${vitals['temperatureC'] ?? '--'}°C' : '--',
+                subtitle: 'Device temperature',
                 icon: Icons.thermostat_rounded,
-                backgroundColor: _getThermalColor(vitals?['temperatureC']),
+                iconColor: _getThermalColor(vitals?['temperatureC']),
+                cardColor: AppColors.secondary,
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -147,26 +148,6 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildVitalCard(
-    BuildContext context, {
-    required String title,
-    required String value,
-    required String unit,
-    required String subtitle,
-    required IconData icon,
-    required Color backgroundColor,
-  }) {
-    return SensorInfoCard(
-      title: title,
-      value: value,
-      unit: unit,
-      subtitle: subtitle,
-      icon: Icon(icon, size: 32, color: Colors.white),
-      backgroundColor: backgroundColor,
-      textColor: Colors.white,
     );
   }
 
