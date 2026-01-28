@@ -17,9 +17,8 @@ class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
     return DeviceInfoEntity(
       batteryLevel: model.batteryLevel,
       isCharging: model.isCharging,
-      usedMemoryGB: model.usedMemoryGB,
-      totalMemoryGB: model.totalMemoryGB,
-      temperatureC: model.temperatureC,
+      memoryUsagePercentage: model.memoryUsagePercentage,
+      thermalStatus: model.thermalStatus,
     );
   }
 }

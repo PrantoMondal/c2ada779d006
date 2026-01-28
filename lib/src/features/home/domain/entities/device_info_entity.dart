@@ -1,23 +1,32 @@
 class DeviceInfoEntity {
   final int batteryLevel;
   final bool isCharging;
-  final double usedMemoryGB;
-  final double totalMemoryGB;
-  final double temperatureC;
+  final double memoryUsagePercentage;
+  final int thermalStatus;
 
   DeviceInfoEntity({
     required this.batteryLevel,
     required this.isCharging,
-    required this.usedMemoryGB,
-    required this.totalMemoryGB,
-    required this.temperatureC,
+    required this.memoryUsagePercentage,
+    required this.thermalStatus,
   });
 
-  double get availableMemoryGB => totalMemoryGB - usedMemoryGB;
-  double get memoryUsagePercentage =>
-      totalMemoryGB > 0 ? (usedMemoryGB / totalMemoryGB) * 100 : 0.0;
-
   bool get isBatteryLow => batteryLevel < 20;
-  bool get isOverheating => temperatureC > 40.0;
+  bool get isOverheating => thermalStatus >= 2;
   bool get isBatteryUnknown => batteryLevel == -1;
+
+  String get thermalStatusText {
+    switch (thermalStatus) {
+      case 0:
+        return 'Normal';
+      case 1:
+        return 'Light';
+      case 2:
+        return 'Moderate';
+      case 3:
+        return 'Severe';
+      default:
+        return 'Unknown';
+    }
+  }
 }

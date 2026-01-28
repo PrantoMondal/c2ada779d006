@@ -1,7 +1,7 @@
 class InfoParams {
   final String deviceId;
   final String timestamp;
-  final double thermalValue;
+  final int thermalValue;
   final double batteryLevel;
   final double memoryUsage;
 

@@ -38,15 +38,15 @@ class HistoryCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppValues.gapSmall),
           const Divider(height: 1),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppValues.gapSmall),
 
           _infoRow(
             icon: Icons.thermostat_outlined,
             label: 'Thermal State',
-            value: '${temperature.toStringAsFixed(1)} °C',
+            value: temperature.toStringAsFixed(0),
           ),
           _infoRow(
             icon: Icons.battery_5_bar_outlined,

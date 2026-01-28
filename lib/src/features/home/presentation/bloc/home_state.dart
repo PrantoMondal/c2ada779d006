@@ -9,6 +9,8 @@ class HomeState extends Equatable {
   final String? errorMessage;
   final DateTime? lastUpdated;
   final bool isRefreshing;
+  final String? logSuccessMessage;
+  final bool isLogging;
 
   const HomeState({
     this.status = HomeStatus.initial,
@@ -16,6 +18,8 @@ class HomeState extends Equatable {
     this.errorMessage,
     this.lastUpdated,
     this.isRefreshing = false,
+    this.logSuccessMessage,
+    this.isLogging = false,
   });
 
   HomeState copyWith({
@@ -24,6 +28,8 @@ class HomeState extends Equatable {
     String? errorMessage,
     DateTime? lastUpdated,
     bool? isRefreshing,
+    String? logSuccessMessage,
+    bool? isLogging,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -31,6 +37,8 @@ class HomeState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       isRefreshing: isRefreshing ?? this.isRefreshing,
+      logSuccessMessage: logSuccessMessage ?? this.logSuccessMessage,
+      isLogging: isLogging ?? this.isLogging,
     );
   }
 
@@ -51,5 +59,7 @@ class HomeState extends Equatable {
     errorMessage,
     lastUpdated,
     isRefreshing,
+    logSuccessMessage,
+    isLogging,
   ];
 }

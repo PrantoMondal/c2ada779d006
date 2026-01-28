@@ -42,25 +42,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _onLogVitals(LogVitals event, Emitter<HomeState> emit) async {
-    if (state.deviceData == null) {
-      emit(state.copyWith(errorMessage: "No device data available to log"));
-      return;
-    }
+    if (state.deviceData == null || state.isLogging) return;
 
-    emit(state.copyWith(errorMessage: null));
-    final deviceId = await DeviceUtils.getDeviceId();
+    emit(state.copyWith(isLogging: true, errorMessage: null, logSuccessMessage: null));
+
     try {
+      final deviceId = await DeviceUtils.getDeviceId();
+
       final params = InfoParams(
         deviceId: deviceId,
-        timestamp: '${DateTime.now().toUtc().toIso8601String().split('.').first}Z',
-        thermalValue: state.deviceData!.temperatureC,
+        timestamp: '${state.lastUpdated!.toUtc().toIso8601String().split('.').first}Z',
+        thermalValue: state.deviceData!.thermalStatus,
         batteryLevel: state.deviceData!.batteryLevel.toDouble(),
         memoryUsage: state.deviceData!.memoryUsagePercentage,
       );
 
       final message = await logStatus(params: params);
+      emit(state.copyWith(isLogging: false, logSuccessMessage: message));
     } catch (e) {
-      emit(state.copyWith(errorMessage: "Failed to log status: ${e.toString()}"));
+      emit(
+        state.copyWith(
+          isLogging: false,
+          errorMessage: "Failed to log status: ${e.toString()}",
+        ),
+      );
     }
   }
 }

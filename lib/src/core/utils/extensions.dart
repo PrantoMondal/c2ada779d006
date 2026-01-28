@@ -11,15 +11,6 @@ extension Extensions on dynamic {
     }
   }
 
-  String get thermalStatus {
-    final temp = this;
-    if (temp == null) return 'Loading...';
-    if (temp < 35) return 'Cool';
-    if (temp < 42) return 'Normal';
-    if (temp < 50) return 'Warm';
-    return 'Hot • Caution';
-  }
-
   Color get thermalColor {
     final temp = this;
     if (temp == null) return Colors.deepOrange;

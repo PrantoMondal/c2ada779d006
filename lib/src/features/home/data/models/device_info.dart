@@ -1,25 +1,22 @@
 class DeviceInfo {
   final int batteryLevel;
   final bool isCharging;
-  final double usedMemoryGB;
-  final double totalMemoryGB;
-  final double temperatureC;
+  final double memoryUsagePercentage;
+  final int thermalStatus;
 
   DeviceInfo({
     required this.batteryLevel,
     required this.isCharging,
-    required this.usedMemoryGB,
-    required this.totalMemoryGB,
-    required this.temperatureC,
+    required this.memoryUsagePercentage,
+    required this.thermalStatus,
   });
 
   factory DeviceInfo.fromMap(Map<String, dynamic> map) {
     return DeviceInfo(
       batteryLevel: _parseBatteryLevel(map['batteryLevel']),
       isCharging: map['isCharging'] as bool? ?? false,
-      usedMemoryGB: (map['usedMemoryGB'] as num?)?.toDouble() ?? 0.0,
-      totalMemoryGB: (map['totalMemoryGB'] as num?)?.toDouble() ?? 0.0,
-      temperatureC: (map['temperatureC'] as num?)?.toDouble() ?? 0.0,
+      memoryUsagePercentage: (map['memoryUsagePercentage'] as num?)?.toDouble() ?? 0.0,
+      thermalStatus: map['thermalStatus'] as int? ?? 0,
     );
   }
 
@@ -33,9 +30,8 @@ class DeviceInfo {
     return {
       'batteryLevel': batteryLevel,
       'isCharging': isCharging,
-      'usedMemoryGB': usedMemoryGB,
-      'totalMemoryGB': totalMemoryGB,
-      'temperatureC': temperatureC,
+      'memoryUsagePercentage': memoryUsagePercentage,
+      'thermalStatus': thermalStatus,
     };
   }
 }

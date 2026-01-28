@@ -45,6 +45,19 @@ abstract class BaseView<T extends BlocBase<S>, S> extends StatelessWidget {
       );
   }
 
+  void onSuccess(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: AppColors.successColor,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

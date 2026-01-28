@@ -58,7 +58,16 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
             ),
           );
         }
+        if (state.logSuccessMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.logSuccessMessage!),
+              backgroundColor: AppColors.successColor,
+            ),
+          );
+        }
       },
+
       builder: (context, state) {
         if (state.isFailure && !state.hasData) {
           return Center(
@@ -108,78 +117,68 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
                 status: vitals != null
                     ? (vitals.isCharging ? 'Charging' : 'Not charging')
                     : 'Loading',
-                value: vitals != null ? '${vitals.batteryLevel ?? '--'}%' : '--',
+                value: vitals != null ? '${vitals.batteryLevel}%' : '--',
                 subtitle: "",
                 icon: Icons.battery_charging_full_rounded,
-                iconColor: Colors.blue,
+                iconColor: AppColors.successColor,
                 cardColor: AppColors.secondary,
               ),
 
               SensorInfoCard(
                 title: 'Memory',
                 status: 'Used',
-                value: vitals != null
-                    ? '${double.tryParse(vitals.memoryUsagePercentage.toString())?.toStringAsFixed(2) ?? '--'} GB'
-                          '/ ${double.tryParse(vitals.totalMemoryGB.toString())?.toStringAsFixed(2) ?? '--'} GB'
-                    : '--',
-                subtitle: "Apps + System",
+                value: "${vitals?.memoryUsagePercentage.toString()} %" ?? '--',
+                subtitle: "Used memory",
                 icon: Icons.memory_rounded,
-                iconColor: Colors.teal,
+                iconColor: AppColors.successColor,
                 cardColor: AppColors.secondary,
               ),
 
               SensorInfoCard(
                 title: 'Thermal',
-                status: _getThermalStatus(vitals?.temperatureC),
-                value: vitals != null ? '${vitals.temperatureC ?? '--'}°C' : '--',
+                status: vitals!.thermalStatusText,
+                value: '${vitals.thermalStatus}',
                 subtitle: 'Device temperature',
                 icon: Icons.thermostat_rounded,
-                iconColor: _getThermalColor(vitals?.temperatureC),
+                iconColor: AppColors.successColor,
                 cardColor: AppColors.secondary,
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  elevation: 0,
-                ),
-                onPressed: () {
-                  if (state.isSuccess && state.hasData) {
-                    context.read<HomeBloc>().add(const LogVitals());
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("No data available to log yet")),
-                    );
-                  }
-                },
-                child: Text(
-                  "Log Status",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: AppColors.backgroundColor),
-                ),
-              ),
+              state.isLogging
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        if (state.isSuccess && state.hasData) {
+                          context.read<HomeBloc>().add(const LogVitals());
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("No data available to log yet")),
+                          );
+                        }
+                      },
+                      child: Text(
+                        "Log Status",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.backgroundColor,
+                        ),
+                      ),
+                    ),
             ],
           ),
         );
       },
     );
-  }
-
-  String _getThermalStatus(double? temp) {
-    if (temp == null) return "Loading...";
-    if (temp < 35) return "Cool";
-    if (temp < 42) return "Normal";
-    if (temp < 50) return "Warm";
-    return "Hot • Caution";
-  }
-
-  Color _getThermalColor(double? temp) {
-    if (temp == null) return Colors.deepOrange;
-    if (temp < 35) return Colors.blue;
-    if (temp < 42) return Colors.teal;
-    if (temp < 50) return Colors.orange;
-    return Colors.redAccent;
   }
 }
