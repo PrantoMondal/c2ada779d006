@@ -49,6 +49,15 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
             ),
           );
         }
+        if (state.errorMessage != null &&
+            state.errorMessage!.contains("Failed to log status")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+        }
       },
       builder: (context, state) {
         if (state.isFailure && !state.hasData) {
@@ -135,7 +144,15 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   elevation: 0,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  if (state.isSuccess && state.hasData) {
+                    context.read<HomeBloc>().add(const LogVitals());
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("No data available to log yet")),
+                    );
+                  }
+                },
                 child: Text(
                   "Log Status",
                   style: Theme.of(

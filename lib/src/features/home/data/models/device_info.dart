@@ -23,7 +23,6 @@ class DeviceInfo {
     );
   }
 
-  /// Parse battery level which can be int or "unknown" string
   static int _parseBatteryLevel(dynamic value) {
     if (value is int) return value;
     if (value is String && value == "unknown") return -1;

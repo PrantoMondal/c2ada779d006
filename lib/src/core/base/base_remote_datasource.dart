@@ -30,9 +30,11 @@ abstract class BaseRemoteDatasource {
       );
 
       // Check HTTP status
-      if (response.statusCode != HttpStatus.ok) {
+      if (response.statusCode == null ||
+          response.statusCode! < 200 ||
+          response.statusCode! >= 300) {
         final message = response.data is Map<String, dynamic>
-            ? (response.data as Map<String, dynamic>)["msg"] ?? "Unknown error"
+            ? (response.data as Map<String, dynamic>)["message"] ?? "Unknown error"
             : "Unknown error";
         logger.w("API returned non-OK status: $message");
         throw ApiException(

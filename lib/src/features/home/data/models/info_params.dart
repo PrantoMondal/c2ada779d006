@@ -15,21 +15,21 @@ class InfoParams {
 
   factory InfoParams.fromJson(Map<String, dynamic> json) {
     return InfoParams(
-      deviceId: json['deviceId'],
+      deviceId: json['device_id'],
       timestamp: json['timestamp'],
-      thermalValue: json['thermalValue'],
-      batteryLevel: json['batteryLevel'],
-      memoryUsage: json['memoryUsage'],
+      thermalValue: json['thermal_value'],
+      batteryLevel: json['battery_level'],
+      memoryUsage: json['memory_usage'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'deviceId': deviceId,
+      'device_id': deviceId,
       'timestamp': timestamp,
-      'thermalValue': thermalValue,
-      'batteryLevel': batteryLevel,
-      'memoryUsage': memoryUsage,
+      'thermal_value': thermalValue,
+      'battery_level': batteryLevel,
+      'memory_usage': memoryUsage,
     };
   }
 }

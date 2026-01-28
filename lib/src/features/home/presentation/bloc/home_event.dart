@@ -15,3 +15,10 @@ class LoadHomeData extends HomeEvent {
   @override
   List<Object?> get props => [isRefresh];
 }
+
+class LogVitals extends HomeEvent {
+  const LogVitals();
+
+  @override
+  List<Object?> get props => [];
+}

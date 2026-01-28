@@ -8,9 +8,6 @@ class DeviceInfoDataSource {
   Future<DeviceInfo> getAllInfo() async {
     try {
       final result = await _channel.invokeMapMethod<String, dynamic>('getDeviceVitals');
-      print(
-        "asdahd$result",
-      ); //asdahd{batteryLevel: 75, isCharging: true, usedMemoryGB: 4.935482025146484, totalMemoryGB: 7.2464752197265625, temperatureC: 30.8}
       if (result == null) {
         throw Exception('No data received from platform channel');
       }
