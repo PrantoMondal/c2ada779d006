@@ -4,6 +4,7 @@ import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart
 import 'package:device_vitals/src/features/home/presentation/widgets/sensor_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends BaseView<HomeBloc, HomeState> {
   HomeScreen({super.key});
@@ -63,6 +64,16 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  state.lastUpdated != null && state.isSuccess
+                      ? 'Last updated: ${DateFormat("dd MMM yyyy 'at' HH:mm:ss").format(state.lastUpdated!.toLocal())}'
+                      : '',
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
               _buildVitalCard(
                 context,
                 title: "Battery",
@@ -104,24 +115,21 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
                 icon: Icons.thermostat_rounded,
                 backgroundColor: _getThermalColor(vitals?['temperatureC']),
               ),
-
-              if (state.lastUpdated != null && state.isSuccess)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text(
-                    'Last updated: ${state.lastUpdated!.toLocal().toString().substring(0, 19)}',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-                  ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  elevation: 0,
                 ),
-
-              if (state.isLoading && !state.hasData)
-                const Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Center(child: CircularProgressIndicator()),
+                onPressed: () {},
+                child: Text(
+                  "Log Status",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: AppColors.backgroundColor),
                 ),
+              ),
             ],
           ),
         );
