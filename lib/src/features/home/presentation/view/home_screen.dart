@@ -136,8 +136,8 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
 
               SensorInfoCard(
                 title: 'Thermal',
-                status: vitals!.thermalStatusText,
-                value: '${vitals.thermalStatus}',
+                status: vitals?.thermalStatusText ?? '--',
+                value: '${vitals?.thermalStatus ?? 0}',
                 subtitle: 'Device temperature',
                 icon: Icons.thermostat_rounded,
                 iconColor: AppColors.successColor,

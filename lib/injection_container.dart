@@ -1,6 +1,7 @@
 import 'package:device_vitals/src/features/history/data/datasources/history_remote_datasource.dart';
 import 'package:device_vitals/src/features/history/data/repositories/history_repository_impl.dart';
 import 'package:device_vitals/src/features/history/domain/repositories/history_repository.dart';
+import 'package:device_vitals/src/features/history/domain/usecases/get_analytics.dart';
 import 'package:device_vitals/src/features/history/domain/usecases/get_history.dart';
 import 'package:device_vitals/src/features/history/presentation/bloc/history_bloc.dart';
 import 'package:device_vitals/src/features/home/data/datasources/device_info_remote_datasource.dart';
@@ -44,6 +45,7 @@ Future<void> setupDependencies() async {
   );
   sl.registerLazySingleton<LogStatus>(() => LogStatus(sl<DeviceInfoRemoteRepository>()));
   sl.registerLazySingleton<GetHistory>(() => GetHistory(sl<HistoryRepository>()));
+  sl.registerLazySingleton<GetAnalytics>(() => GetAnalytics(sl<HistoryRepository>()));
 
   // B L O C K S
   sl.registerFactory<SplashBloc>(() => SplashBloc()..add(LoadSplash()));
@@ -53,7 +55,9 @@ Future<void> setupDependencies() async {
           ..add(const LoadHomeData()),
   );
   sl.registerFactory<HistoryBloc>(
-    () => HistoryBloc(getHistory: sl<GetHistory>())..add(const LoadHistory()),
+    () => HistoryBloc(getHistory: sl<GetHistory>(), getAnalytics: sl<GetAnalytics>())
+      ..add(const LoadHistory())
+      ..add(const LoadAnalytics()),
   );
 
   // D I O

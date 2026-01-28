@@ -28,19 +28,116 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
   Widget body(BuildContext context) {
     return BlocBuilder<HistoryBloc, HistoryState>(
       builder: (context, state) {
-        return ListView.builder(
-          itemCount: state.items.length,
-          itemBuilder: (_, index) {
-            final item = state.items[index];
-            return HistoryCard(
-              battery: item.battery,
-              memory: item.usedMemory.toString(),
-              temperature: item.temperature,
-              time: item.timestamp.formattedTime,
-            );
-          },
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: state.items.length,
+                itemBuilder: (_, index) {
+                  final item = state.items[index];
+                  return HistoryCard(
+                    battery: item.battery,
+                    memory: item.usedMemory.toString(),
+                    temperature: double.parse(item.temperature.toStringAsFixed(1)),
+                    time: item.timestamp.formattedTime,
+                  );
+                },
+              ),
+            ),
+            state.analytics != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Analytics',
+                        style: TextStyle(
+                          color: AppColors.shadowColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary,
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildAnalyticsRow(
+                              label: 'Battery',
+                              value:
+                                  '${state.analytics!.rollingAverage.battery.toStringAsFixed(1)}%',
+                              icon: Icons.battery_charging_full,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildAnalyticsRow(
+                              label: 'Memory',
+                              value:
+                                  '${state.analytics!.rollingAverage.memory.toStringAsFixed(1)}%',
+                              icon: Icons.memory,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildAnalyticsRow(
+                              label: 'Thermal',
+                              value: _getThermalText(
+                                state.analytics!.rollingAverage.thermal.toInt(),
+                              ),
+                              icon: Icons.thermostat,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : SizedBox(),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildAnalyticsRow({
+    required String label,
+    required String value,
+    required IconData icon,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: AppColors.textPrimary, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: TextStyle(color: AppColors.textPrimary.withOpacity(0.7), fontSize: 14),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Add this helper method for thermal text
+  String _getThermalText(int status) {
+    switch (status) {
+      case 0:
+        return 'Normal';
+      case 1:
+        return 'Light';
+      case 2:
+        return 'Moderate';
+      case 3:
+        return 'Severe';
+      default:
+        return 'Unknown';
+    }
   }
 }

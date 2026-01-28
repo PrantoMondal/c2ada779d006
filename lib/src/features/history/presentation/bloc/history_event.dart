@@ -7,3 +7,7 @@ abstract class HistoryEvent {
 class LoadHistory extends HistoryEvent {
   const LoadHistory();
 }
+
+class LoadAnalytics extends HistoryEvent {
+  const LoadAnalytics();
+}

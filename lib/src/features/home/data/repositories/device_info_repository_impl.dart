@@ -12,8 +12,6 @@ class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
   @override
   Future<DeviceInfoEntity> getAllInfo() async {
     final model = await dataSource.getAllInfo();
-
-    log(">>>>>>>>>>${model.toString()}");
     return DeviceInfoEntity(
       batteryLevel: model.batteryLevel,
       isCharging: model.isCharging,
