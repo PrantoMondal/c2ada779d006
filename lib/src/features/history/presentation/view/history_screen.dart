@@ -13,13 +13,21 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
   bool isLoading(HistoryState state) => state.isLoading;
 
   @override
+  PreferredSizeWidget? appBar(BuildContext context) {
+    return AppBar(
+      title: Text('History', style: TextStyle(color: AppColors.textPrimary)),
+      backgroundColor: AppColors.primary,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
+
+  @override
   Widget body(BuildContext context) {
     return BlocBuilder<HistoryBloc, HistoryState>(
       builder: (context, state) {
-        if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         return ListView.builder(
           itemCount: state.items.length,
           itemBuilder: (_, index) {

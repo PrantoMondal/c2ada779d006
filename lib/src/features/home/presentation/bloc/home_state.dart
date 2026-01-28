@@ -5,7 +5,7 @@ enum HomeStatus { initial, loading, success, failure }
 @immutable
 class HomeState extends Equatable {
   final HomeStatus status;
-  final Map<String, dynamic>? deviceData;
+  final DeviceInfoEntity? deviceData;
   final String? errorMessage;
   final DateTime? lastUpdated;
   final bool isRefreshing;
@@ -20,7 +20,7 @@ class HomeState extends Equatable {
 
   HomeState copyWith({
     HomeStatus? status,
-    Map<String, dynamic>? deviceData,
+    DeviceInfoEntity? deviceData,
     String? errorMessage,
     DateTime? lastUpdated,
     bool? isRefreshing,
@@ -35,10 +35,14 @@ class HomeState extends Equatable {
   }
 
   bool get isInitial => status == HomeStatus.initial;
+
   bool get isLoading => status == HomeStatus.loading;
+
   bool get isSuccess => status == HomeStatus.success;
+
   bool get isFailure => status == HomeStatus.failure;
-  bool get hasData => deviceData != null && deviceData!.isNotEmpty;
+
+  bool get hasData => deviceData != null;
 
   @override
   List<Object?> get props => [

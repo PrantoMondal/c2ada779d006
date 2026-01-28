@@ -1,44 +1,22 @@
 import 'package:device_vitals/src/core/constants/app_strings.dart';
-import 'package:device_vitals/src/features/home/domain/repositories/device_info_repository.dart';
+import 'package:device_vitals/src/features/home/data/models/device_info.dart';
 import 'package:flutter/services.dart';
 
-class DeviceInfoDataSource implements DeviceInfoRepository {
+class DeviceInfoDataSource {
   static const MethodChannel _channel = MethodChannel(AppStrings.deviceInfoChannelName);
 
-  @override
-  Future<Map<String, dynamic>> getAllInfo() async {
+  Future<DeviceInfo> getAllInfo() async {
     try {
       final result = await _channel.invokeMapMethod<String, dynamic>('getDeviceVitals');
-      return result ?? {};
+      print(
+        "asdahd$result",
+      ); //asdahd{batteryLevel: 75, isCharging: true, usedMemoryGB: 4.935482025146484, totalMemoryGB: 7.2464752197265625, temperatureC: 30.8}
+      if (result == null) {
+        throw Exception('No data received from platform channel');
+      }
+      return DeviceInfo.fromMap(result);
     } on PlatformException catch (e) {
       throw Exception('Platform error: ${e.message}');
-    }
-  }
-
-  @override
-  Future<int?> getBatteryInfo() async {
-    try {
-      return await _channel.invokeMethod<int>('getBatteryLevel');
-    } on PlatformException {
-      return null;
-    }
-  }
-
-  @override
-  Future<double?> getMemoryInfo() async {
-    try {
-      return await _channel.invokeMethod<double>('getUsedMemory');
-    } on PlatformException {
-      return null;
-    }
-  }
-
-  @override
-  Future<double?> getThermalInfo() async {
-    try {
-      return await _channel.invokeMethod<double>('getDeviceTemperature');
-    } on PlatformException {
-      return null;
     }
   }
 }

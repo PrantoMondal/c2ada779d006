@@ -1,3 +1,4 @@
+import 'package:device_vitals/src/features/home/domain/entities/device_info_entity.dart';
 import 'package:device_vitals/src/features/home/domain/usecases/get_device_info.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

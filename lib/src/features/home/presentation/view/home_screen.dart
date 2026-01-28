@@ -6,7 +6,6 @@ import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart
 import 'package:device_vitals/src/features/home/presentation/widgets/sensor_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class HomeScreen extends BaseView<HomeBloc, HomeState> {
   HomeScreen({super.key});
@@ -98,9 +97,9 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
               SensorInfoCard(
                 title: 'Battery',
                 status: vitals != null
-                    ? (vitals['isCharging'] == true ? 'Charging' : 'Not charging')
+                    ? (vitals.isCharging ? 'Charging' : 'Not charging')
                     : 'Loading',
-                value: vitals != null ? '${vitals['batteryLevel'] ?? '--'}%' : '--',
+                value: vitals != null ? '${vitals.batteryLevel ?? '--'}%' : '--',
                 subtitle: "",
                 icon: Icons.battery_charging_full_rounded,
                 iconColor: Colors.blue,
@@ -111,8 +110,8 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
                 title: 'Memory',
                 status: 'Used',
                 value: vitals != null
-                    ? '${double.tryParse(vitals['usedMemoryGB'].toString())?.toStringAsFixed(2) ?? '--'} GB'
-                          '/ ${double.tryParse(vitals['totalMemoryGB'].toString())?.toStringAsFixed(2) ?? '--'} GB'
+                    ? '${double.tryParse(vitals.memoryUsagePercentage.toString())?.toStringAsFixed(2) ?? '--'} GB'
+                          '/ ${double.tryParse(vitals.totalMemoryGB.toString())?.toStringAsFixed(2) ?? '--'} GB'
                     : '--',
                 subtitle: "Apps + System",
                 icon: Icons.memory_rounded,
@@ -122,11 +121,11 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
 
               SensorInfoCard(
                 title: 'Thermal',
-                status: _getThermalStatus(vitals?['temperatureC']),
-                value: vitals != null ? '${vitals['temperatureC'] ?? '--'}°C' : '--',
+                status: _getThermalStatus(vitals?.temperatureC),
+                value: vitals != null ? '${vitals.temperatureC ?? '--'}°C' : '--',
                 subtitle: 'Device temperature',
                 icon: Icons.thermostat_rounded,
-                iconColor: _getThermalColor(vitals?['temperatureC']),
+                iconColor: _getThermalColor(vitals?.temperatureC),
                 cardColor: AppColors.secondary,
               ),
               ElevatedButton(
