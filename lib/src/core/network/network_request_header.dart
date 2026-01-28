@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 
 class RequestHeaderInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // options.headers['content-type'] = 'application/json';
-
+  onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers['content-type'] = 'application/json';
     super.onRequest(options, handler);
   }
 

@@ -1,5 +1,6 @@
 import 'package:device_vitals/src/core/base/base_view.dart';
 import 'package:device_vitals/src/core/constants/app_colors.dart';
+import 'package:device_vitals/src/core/routes/app_router.dart';
 import 'package:device_vitals/src/features/home/presentation/bloc/home_bloc.dart';
 import 'package:device_vitals/src/features/home/presentation/widgets/sensor_info_card.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,18 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
 
   @override
   bool isLoading(HomeState state) => state.isLoading && !state.isRefreshing;
+  @override
+  PreferredSizeWidget? appBar(BuildContext context) {
+    return AppBar(
+      title: const Text('Device Vitals'),
+      actions: [
+        IconButton(
+          onPressed: () => Navigator.of(context).pushNamed(Routes.history),
+          icon: const Icon(Icons.refresh),
+        ),
+      ]
+    );
+  }
 
   @override
   Widget body(BuildContext context) {
