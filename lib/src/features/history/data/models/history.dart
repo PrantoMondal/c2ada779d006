@@ -2,7 +2,7 @@ class History {
   final int battery;
   final double temperature;
   final double usedMemory;
-  final DateTime timestamp;
+  final String timestamp;
 
   History({
     required this.battery,

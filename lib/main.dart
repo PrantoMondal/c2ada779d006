@@ -13,7 +13,7 @@ void main() async {
     appName: packageInfo.appName,
     appVersion: packageInfo.version,
     packageName: packageInfo.packageName,
-    baseUrl: "http://10.173.90.191:3000/api",
+    baseUrl: "http://192.168.0.102:3000/api",
   );
 
   BuildConfig.instantiate(config: envConfig);
