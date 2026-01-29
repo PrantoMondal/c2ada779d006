@@ -6,7 +6,7 @@ class VitalsController {
     try {
       const parsed = vitalSchema.parse(req.body);
       service.saveVital(parsed);
-      res.status(201).json({ message: "Vital recorded" });
+      res.status(201).json({ message: "Vitals logged successfully" });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
