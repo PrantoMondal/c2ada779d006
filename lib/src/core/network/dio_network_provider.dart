@@ -8,9 +8,9 @@ class NetworkProvider {
 
   static final BaseOptions _options = BaseOptions(
     baseUrl: BuildConfig.instance.envConfig.baseUrl,
-    sendTimeout: const Duration(seconds: 1 * 3),
-    connectTimeout: const Duration(seconds: 1 * 3),
-    receiveTimeout: const Duration(seconds: 1 * 3),
+    sendTimeout: const Duration(seconds: 60 * 3),
+    connectTimeout: const Duration(seconds: 60 * 3),
+    receiveTimeout: const Duration(seconds: 60 * 3),
   );
 
   static Dio get httpDio {
