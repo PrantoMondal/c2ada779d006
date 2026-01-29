@@ -25,19 +25,19 @@ class HomeState extends Equatable {
   HomeState copyWith({
     HomeStatus? status,
     DeviceInfoEntity? deviceData,
-    String? errorMessage,
+    String? Function()? errorMessage,
     DateTime? lastUpdated,
     bool? isRefreshing,
-    String? logSuccessMessage,
+    String? Function()? logSuccessMessage,
     bool? isLogging,
   }) {
     return HomeState(
       status: status ?? this.status,
       deviceData: deviceData ?? this.deviceData,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       isRefreshing: isRefreshing ?? this.isRefreshing,
-      logSuccessMessage: logSuccessMessage ?? this.logSuccessMessage,
+      logSuccessMessage: logSuccessMessage != null ? logSuccessMessage() : this.logSuccessMessage,
       isLogging: isLogging ?? this.isLogging,
     );
   }

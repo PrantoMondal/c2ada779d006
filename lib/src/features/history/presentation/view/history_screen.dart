@@ -1,5 +1,6 @@
 import 'package:device_vitals/src/core/base/base_view.dart';
 import 'package:device_vitals/src/core/constants/app_colors.dart';
+import 'package:device_vitals/src/core/constants/app_values.dart';
 import 'package:device_vitals/src/core/utils/extensions.dart';
 import 'package:device_vitals/src/features/history/presentation/bloc/history_bloc.dart';
 import 'package:device_vitals/src/features/history/presentation/widgets/history_card.dart';
@@ -27,8 +28,11 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
   @override
   Widget body(BuildContext context) {
     return BlocBuilder<HistoryBloc, HistoryState>(
+
       builder: (context, state) {
-        return Column(
+        return state.items.isEmpty? const Center(
+          child: Text('No history found'),
+        ):Column(
           children: [
             Expanded(
               child: ListView.builder(
@@ -44,16 +48,20 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
                 },
               ),
             ),
+            Divider(),
             state.analytics != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Analytics',
-                        style: TextStyle(
-                          color: AppColors.shadowColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: AppValues.gapSmall),
+                        child: const Text(
+                          'Analytics',
+                          style: TextStyle(
+                            color: AppColors.shadowColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Container(
@@ -125,7 +133,6 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
     );
   }
 
-  // Add this helper method for thermal text
   String _getThermalText(int status) {
     switch (status) {
       case 0:

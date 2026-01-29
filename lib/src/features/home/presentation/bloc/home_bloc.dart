@@ -15,7 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final LogStatus logStatus;
 
   HomeBloc({required this.getDeviceInfo, required this.logStatus})
-    : super(const HomeState()) {
+      : super(const HomeState()) {
     on<LoadHomeData>(_onLoadHomeData);
     on<LogVitals>(_onLogVitals);
   }
@@ -23,7 +23,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onLoadHomeData(LoadHomeData event, Emitter<HomeState> emit) async {
     if (state.isLoading) return;
 
-    emit(state.copyWith(status: HomeStatus.loading, isRefreshing: event.isRefresh));
+    emit(state.copyWith(
+      status: HomeStatus.loading,
+      isRefreshing: event.isRefresh,
+      errorMessage: () => null,
+      logSuccessMessage: () => null,
+    ));
 
     try {
       final data = await getDeviceInfo();
@@ -33,18 +38,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           status: HomeStatus.success,
           deviceData: data,
           lastUpdated: DateTime.now(),
-          errorMessage: null,
+          errorMessage: () => null,
+          logSuccessMessage: () => null,
         ),
       );
     } catch (e) {
-      emit(state.copyWith(status: HomeStatus.failure, errorMessage: e.toString()));
+      emit(state.copyWith(
+        status: HomeStatus.failure,
+        errorMessage: () => e.toString(),
+        logSuccessMessage: () => null,
+      ));
     }
   }
 
   Future<void> _onLogVitals(LogVitals event, Emitter<HomeState> emit) async {
     if (state.deviceData == null || state.isLogging) return;
 
-    emit(state.copyWith(isLogging: true, errorMessage: null, logSuccessMessage: null));
+    emit(state.copyWith(
+      isLogging: true,
+      errorMessage: () => null,
+      logSuccessMessage: () => null,
+    ));
 
     try {
       final deviceId = await DeviceUtils.getDeviceId();
@@ -58,12 +72,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       final message = await logStatus(params: params);
-      emit(state.copyWith(isLogging: false, logSuccessMessage: message));
+      emit(state.copyWith(
+        isLogging: false,
+        logSuccessMessage: () => message,
+      ));
     } catch (e) {
       emit(
         state.copyWith(
           isLogging: false,
-          errorMessage: "Failed to log status: ${e.toString()}",
+          errorMessage: () => "Failed to log status: ${e.toString()}",
         ),
       );
     }
