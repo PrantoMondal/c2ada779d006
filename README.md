@@ -14,6 +14,17 @@ A Flutter application that monitors device sensor data (thermal state, battery l
 
 ---
 
+## Installation
+1. **Clone the Repository:** <br />Clone this repository to your local machine using the following command:<br /><br />
+    ```bash
+    git clone https://github.com/PrantoMondal/c2ada779d006.git
+    ```
+2. **Install Dependencies:**<br />Navigate to the project directory and complete the setup:<br /><br />
+    ```bash
+    cd c2ada779d006
+    ```
+
+
 ## 🚀 Backend Setup
 
 ### Step 1: Navigate to Backend Directory
@@ -58,7 +69,7 @@ IPv4 Address: 10.173.90.225
 
 ### Step 1: Navigate to Flutter Directory
 ```bash
-cd device_vitals
+cd c2ada779d006
 ```
 
 ### Step 2: Use FVM to Set Flutter Version
