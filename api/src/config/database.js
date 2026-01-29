@@ -1,6 +1,7 @@
 const Database = require("better-sqlite3");
 
-const db = new Database("./src/data/vitals.db");
+const db = new Database('./src/data/vitals.db');
+
 
 db.prepare(
   `
