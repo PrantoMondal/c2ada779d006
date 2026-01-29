@@ -27,107 +27,90 @@ class HistoryScreen extends BaseView<HistoryBloc, HistoryState> {
 
   @override
   Widget body(BuildContext context) {
-    return BlocBuilder<HistoryBloc, HistoryState>(
+    return BlocConsumer<HistoryBloc, HistoryState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error!.toString()), backgroundColor: AppColors.errorColor));
+        }
+      },
 
       builder: (context, state) {
-        return state.items.isEmpty? const Center(
-          child: Text('No history found'),
-        ):Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: state.items.length,
-                itemBuilder: (_, index) {
-                  final item = state.items[index];
-                  return HistoryCard(
-                    battery: item.battery,
-                    memory: item.usedMemory.toString(),
-                    temperature: double.parse(item.temperature.toStringAsFixed(1)),
-                    time: item.timestamp.formattedTime,
-                  );
-                },
-              ),
-            ),
-            Divider(),
-            state.analytics != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: AppValues.gapSmall),
-                        child: const Text(
-                          'Analytics',
-                          style: TextStyle(
-                            color: AppColors.shadowColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
+        return state.items.isEmpty
+            ? const Center(child: Text('No history found'))
+            : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.items.length,
+                      itemBuilder: (_, index) {
+                        final item = state.items[index];
+                        return HistoryCard(
+                          battery: item.battery,
+                          memory: item.usedMemory.toString(),
+                          temperature: double.parse(item.temperature.toStringAsFixed(1)),
+                          time: item.timestamp.formattedTime,
+                        );
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  state.analytics != null
+                      ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildAnalyticsRow(
-                              label: 'Battery',
-                              value:
-                                  '${state.analytics!.rollingAverage.battery.toStringAsFixed(1)}%',
-                              icon: Icons.battery_charging_full,
-                            ),
-                            const SizedBox(height: 12),
-                            _buildAnalyticsRow(
-                              label: 'Memory',
-                              value:
-                                  '${state.analytics!.rollingAverage.memory.toStringAsFixed(1)}%',
-                              icon: Icons.memory,
-                            ),
-                            const SizedBox(height: 12),
-                            _buildAnalyticsRow(
-                              label: 'Thermal',
-                              value: _getThermalText(
-                                state.analytics!.rollingAverage.thermal.toInt(),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: AppValues.gapSmall),
+                              child: const Text(
+                                'Analytics',
+                                style: TextStyle(color: AppColors.shadowColor, fontSize: 16, fontWeight: FontWeight.bold),
                               ),
-                              icon: Icons.thermostat,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(16.0)),
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildAnalyticsRow(
+                                    label: 'Battery',
+                                    value: '${state.analytics!.rollingAverage.battery.toStringAsFixed(1)}%',
+                                    icon: Icons.battery_charging_full,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _buildAnalyticsRow(
+                                    label: 'Memory',
+                                    value: '${state.analytics!.rollingAverage.memory.toStringAsFixed(1)}%',
+                                    icon: Icons.memory,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _buildAnalyticsRow(
+                                    label: 'Thermal',
+                                    value: _getThermalText(state.analytics!.rollingAverage.thermal.toInt()),
+                                    icon: Icons.thermostat,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
-                        ),
-                      ),
-                    ],
-                  )
-                : SizedBox(),
-          ],
-        );
+                        )
+                      : SizedBox(),
+                ],
+              );
       },
     );
   }
 
-  Widget _buildAnalyticsRow({
-    required String label,
-    required String value,
-    required IconData icon,
-  }) {
+  Widget _buildAnalyticsRow({required String label, required String value, required IconData icon}) {
     return Row(
       children: [
         Icon(icon, color: AppColors.textPrimary, size: 20),
         const SizedBox(width: 8),
-        Text(
-          label,
-          style: TextStyle(color: AppColors.textPrimary.withOpacity(0.7), fontSize: 14),
-        ),
+        Text(label, style: TextStyle(color: AppColors.textPrimary.withOpacity(0.7), fontSize: 14)),
         const Spacer(),
         Text(
           value,
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );

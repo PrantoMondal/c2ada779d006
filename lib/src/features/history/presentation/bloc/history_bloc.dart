@@ -1,4 +1,6 @@
 import 'dart:developer';
+
+import 'package:device_vitals/src/core/network/exceptions/exceptions.dart';
 import 'package:device_vitals/src/core/utils/device_utils.dart';
 import 'package:device_vitals/src/features/history/domain/entities/analytics_data_entity.dart';
 import 'package:device_vitals/src/features/history/domain/entities/history_entity.dart';
@@ -13,8 +15,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   final GetHistory getHistory;
   final GetAnalytics getAnalytics;
 
-  HistoryBloc({required this.getHistory, required this.getAnalytics})
-    : super(const HistoryState()) {
+  HistoryBloc({required this.getHistory, required this.getAnalytics}) : super(const HistoryState()) {
     on<LoadHistory>(_onLoadHistory);
     on<LoadAnalytics>(_onLoadAnalytics);
   }
@@ -26,8 +27,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       final history = await getHistory();
 
       emit(state.copyWith(isLoading: false, items: history));
+    } on ApplicationException catch (e) {
+      emit(state.copyWith(isLoading: false, error: () => e.message));
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      emit(state.copyWith(isLoading: false, error: () => "Unknown error occurred"));
     }
   }
 
@@ -39,8 +42,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       final deviceId = await DeviceUtils.getDeviceId();
       final analytics = await getAnalytics(deviceId: deviceId);
       emit(state.copyWith(isLoading: false, analytics: analytics));
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+    } on ApplicationException catch (e) {
+      emit(state.copyWith(isLoading: false, error: () => e.message));
+    } catch (e, s) {
+      emit(state.copyWith(isLoading: false, error: () => "Unknown error occurred"));
     }
   }
 }

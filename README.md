@@ -18,7 +18,7 @@ A Flutter application that monitors device sensor data (thermal state, battery l
 
 ### Step 1: Navigate to Backend Directory
 ```bash
-cd api/src
+cd api
 ```
 
 ### Step 2: Install Dependencies
@@ -28,12 +28,7 @@ npm install
 
 ### Step 3: Start the Server
 ```bash
-npm start
-```
-
-Or for development with auto-reload:
-```bash
-npm run dev
+npm start or node src/server.js
 ```
 
 The server will start on **`http://localhost:3000`**
@@ -80,7 +75,7 @@ fvm install 3.38.6
 
 Open the file:
 ```
-lib/src/core/network/api_client.dart
+lib/src/main.dart
 ```
 
 Find this line:
@@ -206,7 +201,7 @@ const PORT = 3001; // Change from 3000
 ```bash
 # Delete the database file and restart
 rm src/data/vitals.db
-npm start
+npm start or node src/server.js
 ```
 
 ### Flutter Issues
@@ -320,7 +315,7 @@ fvm flutter pub get
 ### Backend Development Mode
 ```bash
 cd api
-npm run dev  # Auto-restarts on file changes
+npm start or node src/server.js  # Auto-restarts on file changes
 ```
 
 ### Flutter Hot Reload

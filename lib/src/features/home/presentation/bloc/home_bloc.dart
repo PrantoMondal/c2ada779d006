@@ -1,3 +1,4 @@
+import 'package:device_vitals/src/core/network/exceptions/exceptions.dart';
 import 'package:device_vitals/src/core/utils/device_utils.dart';
 import 'package:device_vitals/src/features/home/data/models/info_params.dart';
 import 'package:device_vitals/src/features/home/domain/entities/device_info_entity.dart';
@@ -14,8 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetDeviceInfo getDeviceInfo;
   final LogStatus logStatus;
 
-  HomeBloc({required this.getDeviceInfo, required this.logStatus})
-      : super(const HomeState()) {
+  HomeBloc({required this.getDeviceInfo, required this.logStatus}) : super(const HomeState()) {
     on<LoadHomeData>(_onLoadHomeData);
     on<LogVitals>(_onLogVitals);
   }
@@ -23,12 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onLoadHomeData(LoadHomeData event, Emitter<HomeState> emit) async {
     if (state.isLoading) return;
 
-    emit(state.copyWith(
-      status: HomeStatus.loading,
-      isRefreshing: event.isRefresh,
-      errorMessage: () => null,
-      logSuccessMessage: () => null,
-    ));
+    emit(state.copyWith(status: HomeStatus.loading, isRefreshing: event.isRefresh, errorMessage: () => null, logSuccessMessage: () => null));
 
     try {
       final data = await getDeviceInfo();
@@ -43,22 +38,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(
-        status: HomeStatus.failure,
-        errorMessage: () => e.toString(),
-        logSuccessMessage: () => null,
-      ));
+      emit(state.copyWith(status: HomeStatus.failure, errorMessage: () => e.toString(), logSuccessMessage: () => null));
     }
   }
 
   Future<void> _onLogVitals(LogVitals event, Emitter<HomeState> emit) async {
     if (state.deviceData == null || state.isLogging) return;
 
-    emit(state.copyWith(
-      isLogging: true,
-      errorMessage: () => null,
-      logSuccessMessage: () => null,
-    ));
+    emit(state.copyWith(isLogging: true, errorMessage: () => null, logSuccessMessage: () => null));
 
     try {
       final deviceId = await DeviceUtils.getDeviceId();
@@ -72,17 +59,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       final message = await logStatus(params: params);
-      emit(state.copyWith(
-        isLogging: false,
-        logSuccessMessage: () => message,
-      ));
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isLogging: false,
-          errorMessage: () => "Failed to log status: ${e.toString()}",
-        ),
-      );
+      emit(state.copyWith(isLogging: false, logSuccessMessage: () => message));
+    } on ApplicationException catch (e) {
+      emit(state.copyWith(isLogging: false, errorMessage: () => e.message));
+    } catch (e, s) {
+      emit(state.copyWith(isLogging: false, errorMessage: () => "Unknown error occurred"));
     }
   }
 }

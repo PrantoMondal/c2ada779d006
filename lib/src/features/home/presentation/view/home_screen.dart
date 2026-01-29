@@ -49,8 +49,7 @@ class HomeScreen extends BaseView<HomeBloc, HomeState> {
             ),
           );
         }
-        if (state.errorMessage != null &&
-            state.errorMessage!.contains("Failed to log status")) {
+        if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
