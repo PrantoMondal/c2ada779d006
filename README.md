@@ -19,7 +19,7 @@ A Flutter application that monitors device sensor data (thermal state, battery l
     ```bash
     git clone https://github.com/PrantoMondal/c2ada779d006.git
     ```
-2. **Install Dependencies:**<br />Navigate to the project directory and complete the setup:<br /><br />
+2. **Open Directory:**<br />Navigate to the project directory and complete the setup:<br /><br />
     ```bash
     cd c2ada779d006
     ```
