@@ -44,27 +44,29 @@ I have a Flutter BLoC issue. When I trigger refresh using RefreshIndicator, it w
 
 ## The Failures
 
+**Missing Validation Logic in Prompt 2:** Although I specified the data format with ranges like "thermal_value: number (0-3)", "battery_level: number (0-100)", and "memory_usage: number (0-100)", the AI created the API structure but didn't implement range validation. It only checked if the fields were present and were numbers, but didn't reject values outside the specified ranges (e.g., thermal_value of 5 or battery_level of 150 would be accepted). I had to manually add validation logic to reject thermal_value outside 0-3, battery_level outside 0-100, and memory_usage outside 0-100.
+
 ## The Understanding
 
 **Project Structure Created with AI:**
-api/
-├── src/
-│   ├── config/
-│   │   └── database.js          # SQLite connection setup
-│   ├── controllers/
-│   │   └── vitalsController.js  # Request handling & validation
-│   ├── services/
-│   │   └── vitalsService.js     # Business logic layer
-│   ├── repositories/
-│   │   └── vitalsRepository.js  # Database operations
-│   ├── routes/
-│   │   └── vitals.js            # API route definitions
-│   └── app.js                   # Express app configuration
-├── api/
-│   └── index.js                 # Vercel serverless entry point
-└── vercel.json                  # Vercel deployment config
+
+    api/
+    ├── src/
+    │   ├── config/
+    │   │   └── database.js          # SQLite connection setup
+    │   ├── controllers/
+    │   │   └── vitalsController.js  # Request handling & validation
+    │   ├── services/
+    │   │   └── vitalsService.js     # Business logic layer
+    │   ├── repositories/
+    │   │   └── vitalsRepository.js  # Database operations
+    │   ├── routes/
+    │   │   └── vitals.js            # API route definitions
+    │   └── app.js                   # Express app configuration
+    ├── api/
+    │   └── index.js                 # Vercel serverless entry point
+    └── vercel.json                  # Vercel deployment config
 
 This layered architecture separates concerns: routes handle endpoints, controllers validate requests, services contain business logic, and repositories manage data persistence. The separation makes the code maintainable and testable.
-
 
 **BLoC State Management Insight:** In Flutter BLoC's `copyWith` pattern, nullable fields require special handling. Using `String? field` parameters can't explicitly set values to null - they can only replace with non-null values or keep existing ones. The function syntax (`String? Function()? field`) solves this by making null assignment explicit through `() => null`, giving fine-grained control over state updates.
