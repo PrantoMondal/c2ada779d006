@@ -14,7 +14,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.20.2
   cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.8
+  logger: ^2.6.2
+  dio: ^5.9.0
+  package_info_plus: ^9.0.0
+  get_it: ^9.2.0
+  device_info_plus: ^12.3.0
+
 
 
 
@@ -23,6 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  mocktail: ^1.0.3
 
 
 flutter:
